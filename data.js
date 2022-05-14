@@ -21,9 +21,9 @@ const createGridData = (flag) => {
         }
 
     localStorage.setItem('data', JSON.stringify(dataJson))
-    if (!flag)
+    if (flag == 'keys')
         return Object.keys(dataJson)
-    else    return dataJson
+    else    return dataJson[flag]
 }
 
 const topBottomArray = () => {

@@ -1,5 +1,5 @@
 import {createGridData, topBottomArray} from './data.js'
-const   keyArr    = createGridData(false),
+const   keyArr    = createGridData('keys'),
         topBottomArr = topBottomArray(),
         tabContent = document.getElementsByClassName('tab-c')
 window.onload = () => {
@@ -8,14 +8,13 @@ window.onload = () => {
 }
 window.onhashchange = () => showTab()
 const renderTab = (Arr) => {
-    const tabCnt = Arr.length,
-            data = createGridData(true)
+    const tabCnt = Arr.length
     let tmpContainer = document.createElement('template')
         tmpContainer.innerHTML = `<div class="widgets"></div>
                           <div class="tab-headers"></div>
                           <div class="tab-content"></div>`
     document.querySelector('.container').append(tmpContainer.content.cloneNode(true))
-    Arr.map((elem, index) => {
+    createGridData('keys').map((elem, index) => {
         let tmpWidgets = document.createElement('template'),
             tmpTabHeaders = document.createElement('template'), 
             tmpTabContent = document.createElement('template'),
@@ -36,7 +35,7 @@ const renderTab = (Arr) => {
             <fieldset id="group">
                 <legend><input class="mainCheck" id="mainCheck-${elem}-${key}" type="checkbox" onclick="checkBox('${elem}', '${key}')">Check all</legend>
                 ${
-                data[elem].map(el =>`
+                createGridData(elem).map(el =>`
                     <li class="list-group-item list-group-item-info" >
                         <input type="checkbox" class="chk-${elem}-${key}" id="chk${el.id}-${elem}-${key}" onclick="checkBox('${elem}', '${key}', '${el.id}')">   
                         ${el.title}   ${el.id}
@@ -55,13 +54,13 @@ const renderTab = (Arr) => {
 const showTab = () => {
     const location = window.location.hash
     if (location == '') {
-        history.pushState(null, null, `#${tabContent[0].id}`)
+        history.pushState(null, null, `#${keyArr[0]}`)
         tabContent[0].style.display = 'block'
         document.getElementById('0').style.backgroundColor = '#cff4fc'
     }
     else {
         for (let i = 0; i < tabContent.length; i++) {
-            if (location == `#${tabContent[i].id}`) {
+            if (location == `#${keyArr[i]}`) {
              tabContent[i].style.display = 'block'
              document.getElementById(i).style.backgroundColor = '#cff4fc'
             }
@@ -78,7 +77,7 @@ window.activeTab = (event) => {
     for (let i = 0; i < tabContent.length; i++) {
         if (dataTab == i) {
             tabContent[i].style.display = 'block'
-            history.pushState(null, null, `#${tabContent[i].id}`)
+            history.pushState(null, null, `#${keyArr[i]}`)
             document.getElementById(i).style.backgroundColor = '#cff4fc'
             }
         else {
