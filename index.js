@@ -2,23 +2,26 @@ import {createGridData, topBottomArray} from './data.js'
 const   keyArr    = createGridData('keys'),
         topBottomArr = topBottomArray(),
         tabContent = document.getElementsByClassName('tab-c')
+
 window.onload = () => {
-    renderTab(keyArr)
+    renderContent(keyArr)
     showTab() 
 }
+
 window.onhashchange = () => showTab()
-const renderTab = (Arr) => {
-    const tabCnt = Arr.length
-    let tmpContainer = document.createElement('template')
-        tmpContainer.innerHTML = `<div class="widgets"></div>
-                          <div class="tab-headers"></div>
-                          <div class="tab-content"></div>`
+
+const renderContent = (Arr) => {
+    const tabCnt = Arr.length,
+          tmpContainer = document.createElement('template')
+    tmpContainer.innerHTML = `<div class="widgets"></div>
+                        <div class="tab-headers"></div>
+                        <div class="tab-content"></div>`
     document.querySelector('.container').append(tmpContainer.content.cloneNode(true))
     createGridData('keys').map((elem, index) => {
-        let tmpWidgets = document.createElement('template'),
-            tmpTabHeaders = document.createElement('template'), 
-            tmpTabContent = document.createElement('template'),
-            tmpTabC 	= document.createElement('template')
+        const tmpWidgets = document.createElement('template'),
+              tmpTabHeaders = document.createElement('template'), 
+              tmpTabContent = document.createElement('template'),
+              tmpTabC 	= document.createElement('template')
         tmpWidgets.innerHTML = `<div class="widg-group">
                                     <div class="title">${elem} grid</div>
                                     <div class="widget" id="${elem}-top"></div>
@@ -89,8 +92,8 @@ window.activeTab = (event) => {
 
 window.checkBox = (item, key, id) => {
     let  all = [],
-        allTop = [],
-        allBottom = [],
+         allTop = [],
+         allBottom = [],
         count = document.querySelectorAll(`.chk-${item}-${key}`).length
     const main  = document.getElementById('mainCheck' + '-' + item + '-' + key)
     for ( let i = 0; i < count; i++) {
