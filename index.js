@@ -1,93 +1,113 @@
-import {createGridData, topBottomArray} from './data.js'
-const   keyArr    = createGridData('keys'),
-        topBottomArr = topBottomArray(),
+import {createGridData, topBottomArray, getDataKeys, getDataByKeys} from './data.js'
+const   topBottomArr = topBottomArray(),
         tabContent = document.getElementsByClassName('tab-c')
 
 window.onload = () => {
-    renderContent(keyArr)
-    showTab() 
-}
-
-window.onhashchange = () => showTab()
-
-const renderContent = (Arr) => {
-    const tabCnt = Arr.length,
-          tmpContainer = document.createElement('template')
-    tmpContainer.innerHTML = `<div class="widgets"></div>
-                        <div class="tab-headers"></div>
-                        <div class="tab-content"></div>`
-    document.querySelector('.container').append(tmpContainer.content.cloneNode(true))
-    createGridData('keys').map((elem, index) => {
-        const tmpWidgets = document.createElement('template'),
-              tmpTabHeaders = document.createElement('template'), 
-              tmpTabContent = document.createElement('template'),
-              tmpTabC 	= document.createElement('template')
-        tmpWidgets.innerHTML = `<div class="widg-group">
-                                    <div class="title">${elem} grid</div>
-                                    <div class="widget" id="${elem}-top"></div>
-                                </div>`
-        tmpTabHeaders.innerHTML = `<div class="tab-h" id="${index}" data-tab="${index}" onclick="activeTab(event)">${elem}</div>`
-        tmpTabContent.innerHTML = `<div class="tab-c" id="${elem}-bottom" style="display: none"></div>`
-        document.querySelector('.widgets').append(tmpWidgets.content.cloneNode(true))
-        document.querySelector('.tab-headers').append(tmpTabHeaders.content.cloneNode(true))
-        document.querySelector('.tab-content').append(tmpTabContent.content.cloneNode(true))
+    const keyArr = getDataKeys(),
+            firstKey = keyArr[0]
+    let locationHash = window.location.hash.slice(1)
         
-        topBottomArr.map(key => {
-            tmpTabC.innerHTML = `
-            <ol class="list-group list-group-flush">
-            <fieldset id="group">
-                <legend><input class="mainCheck" id="mainCheck-${elem}-${key}" type="checkbox" onclick="checkBox('${elem}', '${key}')">Check all</legend>
-                ${
-                createGridData(elem).map(el =>`
-                    <li class="list-group-item list-group-item-info" >
-                        <input type="checkbox" class="chk-${elem}-${key}" id="chk${el.id}-${elem}-${key}" onclick="checkBox('${elem}', '${key}', '${el.id}')">   
-                        ${el.title}   ${el.id}
-                    </li>
-                `).join('')		
-                }
-            </fieldset>
-            </ol>
-            `
-            document.querySelector('#' + elem + '-' + key).append(tmpTabC.content.cloneNode(true))
-        })
-       
-    })    
+    keyArr.map((key, index) => {
+        let data = getDataByKeys(key),
+            dataByFirstKey = getDataByKeys(firstKey)
+        renderWidgets(key, data)
+        renderTabs(key, index, firstKey, keyArr)
+        if (locationHash == '')
+            renderGrid(firstKey, dataByFirstKey)
+        if (key == locationHash)
+            renderGrid(key, data)
+    })
+    document.querySelector('.tab-h').addEventListener('click', () => console.log(Event.type))
+    
+}
+window.onhashchange = () => window.location.reload()
+
+
+const renderWidgets = (key, keyData) => {
+    const template = document.createElement('template')
+    template.innerHTML = `<div class="widg-group">
+                            <div class="title">${key} grid</div>
+                            <div class="widget" id="${key}-top">
+                                <ol class="list-group list-group-flush">
+                                    <fieldset id="group">
+                                        <legend><input class="mainCheck" id="mainCheck-${key}-top" type="checkbox">Check all</legend>
+                                        ${
+                                        keyData.map(el =>`
+                                            <li class="list-group-item list-group-item-info" >
+                                                <input type="checkbox" class="chk-${key}-top}" id="chk${el.id}-${key}-top">   
+                                                ${el.title}   ${el.id}
+                                            </li>
+                                        `).join('')		
+                                        }
+                                    </fieldset>
+                                </ol>  
+                            </div>
+                        </div>
+                        `
+    document.querySelector('.widgets').append(template.content.cloneNode(true))
 }
 
-const showTab = () => {
-    const location = window.location.hash
+const renderTabs = (key, index, firstKey, keyArr) => {
+    const template = document.createElement('template')
+    template.innerHTML = `<div class="tab-h" id="${index}" data-tab="${index}">${key}</div>`
+    document.querySelector('.tab-headers').append(template.content.cloneNode(true))
+    const location = window.location.hash,
+          keyByLocation = window.location.hash.slice(1)
     if (location == '') {
-        history.pushState(null, null, `#${keyArr[0]}`)
-        tabContent[0].style.display = 'block'
+        history.pushState(null, null, `#${firstKey}`)
+       
         document.getElementById('0').style.backgroundColor = '#cff4fc'
     }
     else {
-        for (let i = 0; i < tabContent.length; i++) {
-            if (location == `#${keyArr[i]}`) {
-             tabContent[i].style.display = 'block'
-             document.getElementById(i).style.backgroundColor = '#cff4fc'
+      
+            if (location == `#${key}`) {
+                
+             document.getElementById(index).style.backgroundColor = '#cff4fc'
             }
             else {
-                    tabContent[i].style.display = 'none'
-                    document.getElementById(i).style.backgroundColor = 'rgb(126, 211, 214)'
+                    document.getElementById(index).style.backgroundColor = 'rgb(126, 211, 214)'
             }
-        }
+        
     }
+    
 }
 
-window.activeTab = (event) => {
-    const dataTab = event.target.getAttribute('data-tab')
-    for (let i = 0; i < tabContent.length; i++) {
-        if (dataTab == i) {
-            tabContent[i].style.display = 'block'
-            history.pushState(null, null, `#${keyArr[i]}`)
-            document.getElementById(i).style.backgroundColor = '#cff4fc'
+
+const renderGrid = (key, keyData) => {
+    const template = document.createElement('template')
+    template.innerHTML = `<div class="tab-c" id="${key}-bottom">
+                            <ol class="list-group list-group-flush">
+                                <fieldset id="group">
+                                    <legend><input class="mainCheck" id="mainCheck-${key}-bottom" type="checkbox">Check all</legend>
+                                    ${
+                                    keyData.map(el =>`
+                                        <li class="list-group-item list-group-item-info" >
+                                            <input type="checkbox" class="chk-${key}-bottom}" id="chk${el.id}-${key}-bottom">   
+                                            ${el.title}   ${el.id}
+                                        </li>
+                                    `).join('')		
+                                    }
+                                </fieldset>
+                            </ol>  
+                         </div>
+                        `
+    document.querySelector('.tab-content').append(template.content.cloneNode(true))
+}
+
+const activeTab = (event, keyArr, firstKey) => {
+    if (event.type == 'click') {
+        const dataTab = event.target.getAttribute('data-tab')
+        for (let i = 0; i < keyArr.length; i++) {
+            if (dataTab == i) {
+                history.pushState(null, null, `#${keyArr[i]}`)
+                document.getElementById(i).style.backgroundColor = '#cff4fc'
+                }
+            else {         
+                document.getElementById(i).style.backgroundColor = 'rgb(126, 211, 214)'  
             }
-        else {
-            tabContent[i].style.display = 'none'
-            document.getElementById(i).style.backgroundColor = 'rgb(126, 211, 214)'  
-        }
+        }   
     }
+    
 }
 
 window.checkBox = (item, key, id) => {

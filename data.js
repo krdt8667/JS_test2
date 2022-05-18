@@ -1,4 +1,5 @@
-const createGridData = (flag) => {
+let data
+const createGridData = () => {
     
     let count = 30
     const dataArr = (side) => {
@@ -14,16 +15,20 @@ const createGridData = (flag) => {
     }
 
 
-    const dataJson = {
+     data = {
             left: 			dataArr('Left'),
             middle: 		dataArr('Middle'),
             right: 			dataArr('Right')
         }
+    return data
+}
 
-    localStorage.setItem('data', JSON.stringify(dataJson))
-    if (flag == 'keys')
-        return Object.keys(dataJson)
-    else    return dataJson[flag]
+const getDataKeys = () => {
+    return Object.keys(createGridData())
+}
+
+const getDataByKeys = (key) => {
+    return createGridData()[key]
 }
 
 const topBottomArray = () => {
@@ -31,4 +36,4 @@ const topBottomArray = () => {
     return arr
 }
 
-export  {createGridData, topBottomArray}
+export  {createGridData, topBottomArray, getDataKeys, getDataByKeys}
