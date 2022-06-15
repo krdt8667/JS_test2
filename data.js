@@ -15,12 +15,14 @@ const createGridData = () => {
     }
 
 
-     data = {
-            left: 			dataArr('Left'),
-            middle: 		dataArr('Middle'),
-            right: 			dataArr('Right')
-        }
-    return data
+    const dataJson = {
+        left: 			dataArr('Left'),
+        middle: 		dataArr('Middle'),
+        right: 			dataArr('Right')
+    }
+
+    //localStorage.setItem('data', JSON.stringify(dataJson))
+    return dataJson
 }
 
 const getDataKeys = () => {
@@ -31,9 +33,5 @@ const getDataByKeys = (key) => {
     return createGridData()[key]
 }
 
-const topBottomArray = () => {
-    let arr = ['top', 'bottom']
-    return arr
-}
 
-export  {createGridData, topBottomArray, getDataKeys, getDataByKeys}
+export  {createGridData, getDataKeys, getDataByKeys}

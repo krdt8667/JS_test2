@@ -1,24 +1,21 @@
 import {createGridData, topBottomArray, getDataKeys, getDataByKeys} from './data.js'
 const   topBottomArr = topBottomArray(),
-        tabContent = document.getElementsByClassName('tab-c')
+        tabContent = document.getElementsByClassName('tab-content')
 
 window.onload = () => {
     const keyArr = getDataKeys(),
             firstKey = keyArr[0]
     let locationHash = window.location.hash.slice(1)
-        
     keyArr.map((key, index) => {
-        let data = getDataByKeys(key),
-            dataByFirstKey = getDataByKeys(firstKey)
-        renderWidgets(key, data)
-        renderTabs(key, index, firstKey, keyArr)
-        if (locationHash == '')
-            renderGrid(firstKey, dataByFirstKey)
-        if (key == locationHash)
-            renderGrid(key, data)
-    })
-    document.querySelector('.tab-h').addEventListener('click', () => console.log(Event.type))
-    
+    let data = getDataByKeys(key),
+        dataByFirstKey = getDataByKeys(firstKey)
+    renderWidgets(key, data)
+    renderTabs(key, index, firstKey, keyArr)
+    if (locationHash == '')
+        renderGrid(firstKey, dataByFirstKey)
+    if (key == locationHash)
+        renderGrid(key, data)
+    })  
 }
 window.onhashchange = () => window.location.reload()
 
@@ -49,7 +46,7 @@ const renderWidgets = (key, keyData) => {
 
 const renderTabs = (key, index, firstKey, keyArr) => {
     const template = document.createElement('template')
-    template.innerHTML = `<div class="tab-h" id="${index}" data-tab="${index}">${key}</div>`
+    template.innerHTML = `<div class="tab-h" id="${index}" data-tab="${index}" onclick="activeTab(event)">${key}</div>`
     document.querySelector('.tab-headers').append(template.content.cloneNode(true))
     const location = window.location.hash,
           keyByLocation = window.location.hash.slice(1)
